@@ -30,9 +30,9 @@ class InputService
     /**
      * @throws Exception
      */
-    public function parse(): ?array
+    public function parse(?string $path = ''): ?array
     {
-        $this->readCsv();
+        $this->readCsv($path);
         $this->checkHeaders();
         $result = $this->groupItemsByParent();
 
@@ -44,9 +44,9 @@ class InputService
     /**
      * @throws Exception
      */
-    private function readCsv(): void
+    private function readCsv(?string $path): void
     {
-        $this->fileService->readFile(self::CSV_INPUT_PATH);
+        $this->fileService->readFile($path ?: self::CSV_INPUT_PATH);
     }
 
     /**

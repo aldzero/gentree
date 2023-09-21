@@ -15,11 +15,11 @@ class OutputService
         $this->fileService = new FileService();
     }
 
-    public function writeJson(array $data): void
+    public function writeJson(array $data, ?string $path = ''): void
     {
         $json = $this->arrayToJson($data);
 
-        $this->fileService->writeFile(self::JSON_OUTPUT_PATH, $json);
+        $this->fileService->writeFile($path ?: self::JSON_OUTPUT_PATH, $json);
     }
 
     public function arrayToJson(array $data): bool|string
