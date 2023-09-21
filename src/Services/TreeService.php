@@ -17,38 +17,39 @@ class TreeService
     public function build(): TreeItemSchema|array
     {
         $parents = $this->groupItems[self::HEADS_KEY];
-        var_dump('конец');
-        return $this->buildInDepth($parents);
+
+        return $this->buildChildren($parents);
     }
 
-    private function buildInDepth(array $parents): TreeItemSchema|array
+    private function buildChildren(array $parents): TreeItemSchema|array
     {
         /** @var TreeItemSchema $parent */
         foreach ($parents as $parent) {
-
             $itemName = $parent->getItemName();
-
-            $children = $this->groupItems[$itemName] ?? null;
-
-
             $relation = $parent->getRelation();
 
             if ($relation !== '') {
-
-                $relationChildren = $this->groupItems[$relation] ?? null;
-
-                if ($relationChildren !== null) {
-                    $parent->addChildren($relationChildren);
-                }
+                $this->buildRelation($relation, $parent);
             }
+
+            $children = $this->groupItems[$itemName] ?? null;
 
             if ($children === null) {
                 continue;
             }
 
-            $parent->addChildren($this->buildInDepth($children));
+            $parent->addChildren($this->buildChildren($children));
         }
 
         return $parents;
+    }
+
+    private function buildRelation(string $relation, TreeItemSchema $parent): void
+    {
+        $relationChildren = $this->groupItems[$relation] ?? null;
+
+        if ($relationChildren !== null) {
+            $parent->addChildren($relationChildren);
+        }
     }
 }

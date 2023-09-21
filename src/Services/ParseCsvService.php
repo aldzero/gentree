@@ -13,11 +13,21 @@ class ParseCsvService
     private const ITEM_NAME_FIELD_IDX = 0;
     private const TYPE_FIELD_IDX = 1;
     private const PARENT_FIELD_IDX = 2;
-    private const RELATION = 3;
+    private const RELATION_FIELD_IDX = 3;
     private const CSV_INPUT_PATH = 'storage/input/input.csv';
+    private const HEADERS = [
+        'Item Name',
+        'Type',
+        'Parent',
+        'Relation'
+    ];
 
-    /** @var resource */
-    private $resource;
+    private FileService $fileService;
+
+    public function __construct()
+    {
+        $this->fileService = new FileService();
+    }
 
     /**
      * @throws Exception
@@ -25,30 +35,34 @@ class ParseCsvService
     public function parse(): ?array
     {
         $path = $this->checkFileExistence();
-        $this->openFile($path);
+        $this->fileService->readFile($path);
+
+        $this->checkHeaders();
 
         $result = $this->groupItemsByParent();
 
-        $this->closeFile();
+        $this->fileService->closeFile();
 
         return $result;
     }
 
+    /**
+     * @throws Exception
+     */
     private function groupItemsByParent(): array
     {
-        $csvItem = $this->next(); //TODO сделать проверку хедеров
-        $csvItem = $this->next();
+        $csvItem = $this->fileService->nextCsvString();
         $groupItems = [];
 
         while ($csvItem !== false) {
             $itemName = $csvItem[self::ITEM_NAME_FIELD_IDX];
             $parent = $csvItem[self::PARENT_FIELD_IDX];
-            $relation = $csvItem[self::RELATION];
-            $treeItem = new TreeItemSchema($itemName, $parent, $relation);
+            $relation = $csvItem[self::RELATION_FIELD_IDX];
 
+            $treeItem = new TreeItemSchema($itemName, $parent ?: null, $relation);
             $groupItems[$parent][] = $treeItem;
 
-            $csvItem = $this->next();
+            $csvItem = $this->fileService->nextCsvString();
         }
 
         return $groupItems;
@@ -64,20 +78,16 @@ class ParseCsvService
     }
 
     /**
-     * @param string $path
+     * @throws Exception
      */
-    private function openFile(string $path): void
+    private function checkHeaders(): void
     {
-        $this->resource = fopen($path, "r");
-    }
+        $headers = $this->fileService->nextCsvString();
 
-    private function closeFile(): void
-    {
-        fclose($this->resource);
-    }
-
-    private function next(): bool|array
-    {
-        return fgetcsv($this->resource, null, ';');
+        foreach ($headers as $key => $header) {
+            if ($header !== self::HEADERS[$key]) {
+                throw new Exception('Заголовки не соотвествуют стандарту, проверьте файл');
+            }
+        }
     }
 }

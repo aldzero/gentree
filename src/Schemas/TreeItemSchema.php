@@ -12,7 +12,7 @@ class TreeItemSchema implements JsonSerializable
 
     public function __construct(
         private string $itemName,
-        private string $parent,
+        private ?string $parent,
         private string $relation,
     ){
 
@@ -28,12 +28,12 @@ class TreeItemSchema implements JsonSerializable
         $this->itemName = $itemName;
     }
 
-    public function getParent(): string
+    public function getParent(): ?string
     {
         return $this->parent;
     }
 
-    public function setParent(string $parent): void
+    public function setParent(?string $parent): void
     {
         $this->parent = $parent;
     }
