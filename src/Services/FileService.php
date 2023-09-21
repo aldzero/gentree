@@ -18,15 +18,15 @@ class FileService
     {
         $this->closeFile();
 
-        $this->resource = fopen($path, "r") ?: throw new Exception('Файл не найден');
+        $this->resource = fopen($path, "r") ?: throw new Exception("Файл \"{$path} не найден");
     }
 
-    public function writeFile($data): void
+    public function writeFile(string $path, string $data): void
     {
         $this->closeFile();
 
-        $jsonFile = fopen(realpath('storage/output') . '/output.json', 'w');
-        fwrite($jsonFile, json_encode($data,JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT));
+        $file = fopen($path, 'w');
+        fwrite($file, $data);
     }
 
     public function closeFile(): void

@@ -11,11 +11,10 @@ class TreeItemSchema implements JsonSerializable
     private ?array $children = [];
 
     public function __construct(
-        private string $itemName,
+        private string  $itemName,
         private ?string $parent,
-        private string $relation,
-    ){
-
+        private string  $relation,
+    ) {
     }
 
     public function getItemName(): string
