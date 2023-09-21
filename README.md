@@ -12,6 +12,7 @@
 Файл ```input.csv```:
 
 ![Input](storage/images/input.png)
+
 Файл ```output.csv```:
 
 ![Output](storage/images/output.png)
