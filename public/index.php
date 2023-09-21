@@ -6,6 +6,11 @@ use App\Application;
 
 require_once realpath('vendor/autoload.php');
 
+
 $application = new Application;
 
-$application();
+try {
+    $application();
+} catch (Exception $exception) {
+    print($exception->getMessage());
+}

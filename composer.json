@@ -2,7 +2,8 @@
   "autoload": {
     "psr-4": {
       "App\\": "src/",
-      "App\\Services\\": "src/Services/"
+      "App\\Services\\": "src/Services/",
+      "App\\Schemas\\": "src/Schemas/"
     }
   },
   "autoload-dev": {
